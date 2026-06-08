@@ -1,0 +1,57 @@
+{
+  "@context": [
+    "https://schema.gosum.eu/persona/v0.1.jsonld",
+    {
+      "@version": 1.1,
+      "gosum": "https://schema.gosum.eu/persona/v0.1#",
+      "xsd":   "http://www.w3.org/2001/XMLSchema#",
+
+      "memory":       { "@id": "gosum:memory",       "@container": "@list" },
+      "memoryPolicy": "gosum:memoryPolicy",
+
+      "memId":               "gosum:memId",
+      "kind":                "gosum:kind",
+      "gist":                "gosum:gist",
+      "details":             { "@id": "gosum:details", "@container": "@list" },
+      "content":             "gosum:content",
+      "brightness":          { "@id": "gosum:brightness",       "@type": "xsd:decimal" },
+      "salience":            { "@id": "gosum:salience",         "@type": "xsd:decimal" },
+      "emotionalValence":    { "@id": "gosum:emotionalValence", "@type": "xsd:decimal" },
+      "rehearsalCount":      { "@id": "gosum:rehearsalCount",   "@type": "xsd:integer" },
+      "lastRehearsedAt":     { "@id": "gosum:lastRehearsedAt",  "@type": "xsd:dateTime" },
+      "decayProfile":        "gosum:decayProfile",
+      "halfLifeDays":        { "@id": "gosum:halfLifeDays",      "@type": "xsd:decimal" },
+      "rehearsalBoost":      { "@id": "gosum:rehearsalBoost",    "@type": "xsd:decimal" },
+      "valenceProtection":   { "@id": "gosum:valenceProtection", "@type": "xsd:decimal" },
+      "minimumSalience":     { "@id": "gosum:minimumSalience",   "@type": "xsd:decimal" },
+      "detailDecayRate":     { "@id": "gosum:detailDecayRate",   "@type": "xsd:decimal" },
+      "privacyClass":        "gosum:privacyClass",
+      "consentBasis":        "gosum:consentBasis",
+      "redactionStatus":     "gosum:redactionStatus",
+      "tags":                { "@id": "gosum:tags", "@container": "@list" },
+
+      "enabled":                   "gosum:enabled",
+      "scope":                     "gosum:scope",
+      "maxAtoms":                  { "@id": "gosum:maxAtoms",               "@type": "xsd:integer" },
+      "maxMemoriesPerTurn":        { "@id": "gosum:maxMemoriesPerTurn",     "@type": "xsd:integer" },
+      "rehearsalCooldownTurns":    { "@id": "gosum:rehearsalCooldownTurns", "@type": "xsd:integer" },
+      "retrievalThreshold":        { "@id": "gosum:retrievalThreshold",     "@type": "xsd:decimal" },
+      "confabulationPolicy":       "gosum:confabulationPolicy",
+      "creationPolicy":            "gosum:creationPolicy",
+      "minSalienceForCreation":    { "@id": "gosum:minSalienceForCreation", "@type": "xsd:decimal" },
+      "salienceClassifier":        "gosum:salienceClassifier",
+      "salienceClassifierVersion": "gosum:salienceClassifierVersion",
+      "retentionPolicy":           "gosum:retentionPolicy",
+      "defaultRetentionDays":      { "@id": "gosum:defaultRetentionDays",   "@type": "xsd:integer" },
+      "perPrivacyClass":           "gosum:perPrivacyClass",
+      "rightToBeForgottenSla":     "gosum:rightToBeForgottenSla",
+      "acknowledgmentHours":       { "@id": "gosum:acknowledgmentHours",    "@type": "xsd:integer" },
+      "completionHours":           { "@id": "gosum:completionHours",        "@type": "xsd:integer" },
+      "tombstoneRetentionDays":    { "@id": "gosum:tombstoneRetentionDays", "@type": "xsd:integer" },
+      "logCreation":   "gosum:logCreation",
+      "logRetrieval":  "gosum:logRetrieval",
+      "logRedaction":  "gosum:logRedaction",
+      "logRehearsal":  "gosum:logRehearsal"
+    }
+  ]
+}

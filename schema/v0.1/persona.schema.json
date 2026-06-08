@@ -1,0 +1,184 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schema.gosum.eu/persona/v0.1.schema.json",
+  "title": "GoSum Persona v0.1",
+  "description": "JSON Schema for the GoSum Persona Specification v0.1. All ten blocks are required.",
+  "type": "object",
+  "required": ["@context","@type","@id","identity","brand","personality","voice","knowledge","guardrails","behavior","telemetry","bindings","provenance"],
+  "properties": {
+    "@context": { "type": "string", "const": "https://schema.gosum.eu/persona/v0.1.jsonld" },
+    "@type":    { "type": "string", "const": "Persona" },
+    "@id":      { "type": "string", "pattern": "^did:gosum:" },
+    "identity": {
+      "type": "object",
+      "required": ["did","name","displayName","version","contentHash","license"],
+      "properties": {
+        "did":             { "type": "string", "pattern": "^did:gosum:" },
+        "name":            { "type": "string", "minLength": 1, "maxLength": 120 },
+        "displayName":     { "type": "object" },
+        "version":         { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+        "contentHash":     { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+        "previousVersion": { "type": "string", "pattern": "^did:gosum:" },
+        "license":         { "type": "string" }
+      }
+    },
+    "brand": {
+      "type": "object",
+      "required": ["ownerOrg","brandName","legalContact","escalationContact","complianceProfiles","verticalContext","signoffStatus"],
+      "properties": {
+        "ownerOrg":  { "type": "string" },
+        "brandName": { "type": "string" },
+        "legalContact": {
+          "type": "object", "required": ["name","email","role"],
+          "properties": { "name": {"type":"string"}, "email": {"type":"string","format":"email"}, "role": {"type":"string"} }
+        },
+        "escalationContact": {
+          "type": "object", "required": ["name","email","role","hours"],
+          "properties": { "name":{"type":"string"}, "email":{"type":"string","format":"email"}, "phone":{"type":"string"}, "role":{"type":"string"}, "hours":{"type":"string"} }
+        },
+        "complianceProfiles": { "type": "array", "items": {"type":"string"}, "minItems": 1 },
+        "verticalContext": { "type": "string", "enum": ["hospitality","retail","quick-service","logistics","healthcare","transit","office","other"] },
+        "signoffStatus":   { "type": "string", "enum": ["draft","legal-review","approved","production","revoked"] },
+        "signoffDate":     { "type": "string", "format": "date-time" }
+      }
+    },
+    "personality": {
+      "type": "object",
+      "required": ["archetype","oceanTraits","styleVector","allowedTones","forbiddenTones","forbiddenPhrases","nameAddressForm"],
+      "properties": {
+        "archetype": { "type": "string", "enum": ["sage","caregiver","host","expert","companion","guide","assistant","entertainer","custom"] },
+        "oceanTraits": {
+          "type": "object",
+          "required": ["openness","conscientiousness","extraversion","agreeableness","neuroticism"],
+          "properties": {
+            "openness":          {"type":"number","minimum":0,"maximum":1},
+            "conscientiousness": {"type":"number","minimum":0,"maximum":1},
+            "extraversion":      {"type":"number","minimum":0,"maximum":1},
+            "agreeableness":     {"type":"number","minimum":0,"maximum":1},
+            "neuroticism":       {"type":"number","minimum":0,"maximum":1}
+          }
+        },
+        "additionalTraits": { "type": "object", "additionalProperties": {"type":"number","minimum":0,"maximum":1} },
+        "styleVector": {
+          "type": "object",
+          "required": ["formality","humor","verbosity","pace","warmth","directness","playfulness"],
+          "properties": {
+            "formality":   {"type":"number","minimum":0,"maximum":1},
+            "humor":       {"type":"number","minimum":0,"maximum":1},
+            "verbosity":   {"type":"number","minimum":0,"maximum":1},
+            "pace":        {"type":"number","minimum":0,"maximum":1},
+            "warmth":      {"type":"number","minimum":0,"maximum":1},
+            "directness":  {"type":"number","minimum":0,"maximum":1},
+            "playfulness": {"type":"number","minimum":0,"maximum":1}
+          }
+        },
+        "allowedTones":     { "type": "array", "items": {"type":"string"}, "minItems": 1 },
+        "forbiddenTones":   { "type": "array", "items": {"type":"string"} },
+        "forbiddenPhrases": { "type": ["array","object"] },
+        "narrativeSpine": {
+          "type": "object",
+          "properties": {
+            "origin":         {"type":"string"},
+            "definingEvents": {"type":"array","items":{"type":"string"}},
+            "themes":         {"type":"array","items":{"type":"string"},"minItems":1,"maxItems":5}
+          }
+        },
+        "nameAddressForm": { "type": "string", "enum": ["first-name","last-name","title-last","none"] }
+      }
+    },
+    "voice": {
+      "type": "object",
+      "required": ["defaultLanguage","supportedLanguages","voiceProfile","prosody","providerBindings","fallbackOrder","latencyBudgetMs"],
+      "properties": {
+        "defaultLanguage":    {"type":"string"},
+        "supportedLanguages": {"type":"array","items":{"type":"string"},"minItems":1},
+        "voiceProfile": {
+          "type":"object","required":["gender","ageRange","accent","register"],
+          "properties":{"gender":{"type":"string"},"ageRange":{"type":"string"},"accent":{"type":"string"},"register":{"type":"string"}}
+        },
+        "prosody": {
+          "type":"object","required":["rate","pitch","energy"],
+          "properties":{"rate":{"type":"number","minimum":0.5,"maximum":2.0},"pitch":{"type":"number","minimum":-50,"maximum":50},"energy":{"type":"number","minimum":0,"maximum":1}}
+        },
+        "providerBindings": {
+          "type":"array","minItems":1,
+          "items":{"type":"object","required":["provider","voiceId","languages"],
+            "properties":{"provider":{"type":"string","enum":["elevenlabs","cartesia","azure-tts","google-tts","coqui","on-device","custom"]},"voiceId":{"type":"string"},"languages":{"type":"array","items":{"type":"string"},"minItems":1}}}
+        },
+        "fallbackOrder":   {"type":"array","items":{"type":"string"},"minItems":1},
+        "latencyBudgetMs": {"type":"integer","minimum":100,"maximum":5000}
+      }
+    },
+    "knowledge": {
+      "type":"object",
+      "required":["domainScope","retrievalSources","freshnessPolicy","factCheckingTier"],
+      "properties":{
+        "domainScope":{"type":"string"},
+        "retrievalSources":{"type":"array"},
+        "freshnessPolicy":{"type":"string","enum":["realtime","daily","weekly","static"]},
+        "factCheckingTier":{"type":"string","enum":["strict","moderate","permissive"]}
+      }
+    },
+    "guardrails": {
+      "type":"object",
+      "required":["topics","restrictedActions","complianceFlags","escalationRules","refusalTemplate","safetyTier"],
+      "properties":{
+        "topics":{"type":"object","required":["allowed","restricted","banned"],"properties":{"allowed":{"type":"array"},"restricted":{"type":"array"},"banned":{"type":"array"}}},
+        "restrictedActions":{"type":"array"},
+        "complianceFlags":{"type":"object","required":["aiDisclosure","profanityFilter","ageGate","gdprDataSubjectRights"],
+          "properties":{"aiDisclosure":{"type":"boolean"},"aiDisclosureText":{"type":"object"},"profanityFilter":{"type":"string","enum":["strict","moderate","off"]},"ageGate":{"type":["integer","null"]},"gdprDataSubjectRights":{"type":"boolean"}}},
+        "escalationRules":{"type":"array","items":{"type":"object","required":["trigger","action","contactRef"],
+          "properties":{"trigger":{"type":"string","enum":["medical-emergency","safety-threat","complaint","payment-dispute","legal-claim","out-of-scope","confidence-low","custom"]},"action":{"type":"string","enum":["handoff-human","pause-and-page","silent-flag","terminate"]},"contactRef":{"type":"string"}}}},
+        "refusalTemplate":{"type":["string","object"]},
+        "safetyTier":{"type":"string","enum":["A","B","C"]}
+      }
+    },
+    "behavior": {
+      "type":"object",
+      "required":["greeting","greetingPolicy","closing","errorFallback","outOfScopeFallback","silenceFallback","silenceTimeoutSec","interruptionPolicy","smallTalk","humorLevel","repetitionAvoidance"],
+      "properties":{
+        "greeting":{"type":"object"},"greetingPolicy":{"type":"string","enum":["proactive","wait-for-trigger","wait-for-speech"]},
+        "closing":{"type":"object"},"errorFallback":{"type":"object"},"outOfScopeFallback":{"type":"object"},"silenceFallback":{"type":"object"},
+        "silenceTimeoutSec":{"type":"integer","minimum":1,"maximum":60},
+        "interruptionPolicy":{"type":"string","enum":["allow","confirm","resist"]},
+        "smallTalk":{"type":"string","enum":["enabled","limited","disabled"]},
+        "humorLevel":{"type":"string","enum":["none","dry","warm","playful"]},
+        "repetitionAvoidance":{"type":"boolean"}
+      }
+    },
+    "telemetry": {
+      "type":"object",
+      "required":["auditPolicy","transcriptRetentionDays","piiHandling","consentDisclosure","analyticsOptIn","dataResidency","redactionRules"],
+      "properties":{
+        "auditPolicy":{"type":"string","enum":["full-transcript","metadata-only","sampled","none"]},
+        "transcriptRetentionDays":{"type":"integer","minimum":0},
+        "piiHandling":{"type":"string","enum":["redact-at-ingest","encrypt-at-rest","passthrough-with-consent"]},
+        "consentDisclosure":{"type":"object"},"analyticsOptIn":{"type":"boolean"},
+        "dataResidency":{"type":"array","items":{"type":"string"},"minItems":1},
+        "redactionRules":{"type":"array"}
+      }
+    },
+    "bindings": {
+      "type":"object",
+      "required":["hardwareAdapters","runtimeConfig","featureFlags"],
+      "properties":{
+        "hardwareAdapters":{"type":"array","items":{"type":"object","required":["vendor","model","firmwareMin","capabilities"],
+          "properties":{"vendor":{"type":"string","enum":["pudu","bear-robotics","keenon","figure","apptronik","unitree","agility","simulator","generic-mqtt","custom"]},"model":{"type":"string"},"firmwareMin":{"type":"string"},"capabilities":{"type":"array"}}}},
+        "runtimeConfig":{"type":"object","required":["llmAdapter","contextWindowTokens","temperatureCeiling"],
+          "properties":{"llmAdapter":{"type":"string","enum":["anthropic","openai","google","aws-bedrock","local-vllm","bring-your-own"]},"llmModelHint":{"type":"string"},"contextWindowTokens":{"type":"integer","minimum":1000},"temperatureCeiling":{"type":"number","minimum":0,"maximum":2.0}}},
+        "featureFlags":{"type":"object"}
+      }
+    },
+    "provenance": {
+      "type":"object",
+      "required":["createdAt","updatedAt","signedBy","signature","revisionLog"],
+      "properties":{
+        "createdAt":{"type":"string","format":"date-time"},"updatedAt":{"type":"string","format":"date-time"},
+        "signedBy":{"type":"string","pattern":"^did:"},"signature":{"type":"string"},
+        "revisionLog":{"type":"array","minItems":1,"items":{"type":"object","required":["version","date","author","changeNote","breaking"],
+          "properties":{"version":{"type":"string","pattern":"^\\d+\\.\\d+\\.\\d+$"},"date":{"type":"string","format":"date-time"},"author":{"type":"string"},"changeNote":{"type":"string"},"breaking":{"type":"boolean"}}}},
+        "lineage":{"type":"string"},"notes":{"type":"string"}
+      }
+    }
+  }
+}
